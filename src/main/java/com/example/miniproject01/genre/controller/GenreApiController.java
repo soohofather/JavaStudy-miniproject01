@@ -6,10 +6,9 @@ import com.example.miniproject01.genre.dto.GenreRequest;
 import com.example.miniproject01.genre.service.GenreService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -28,6 +27,21 @@ public class GenreApiController {
 
     ){
         return genreService.create(genreRequest);
+    }
+
+    @GetMapping("/list")
+    public List<GenreEntity> list(
+
+    ){
+        return genreService.all();
+    }
+
+    @GetMapping("/delete/{id}")
+    public String genreDelete(@PathVariable("id") Long id) {
+
+        genreService.genreDelete(id);
+
+        return "";
     }
 
 }
