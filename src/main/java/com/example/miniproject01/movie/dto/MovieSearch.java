@@ -12,19 +12,13 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class MovieRequest {
+public class MovieSearch {
 
     @NotBlank
     private Long movieId;
     @NotBlank
-    private String genreId;
-    @NotBlank
-    private String originalTitle;
-    @NotBlank
     private String title;
     @NotBlank
     private String releaseDate;
-    private String posterPath;
-    @NotBlank
-    private String overview;
+
 }

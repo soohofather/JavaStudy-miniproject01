@@ -6,6 +6,7 @@ import com.example.miniproject01.genre.dto.GenreRequest;
 import com.example.miniproject01.movie.db.MovieEntity;
 import com.example.miniproject01.movie.db.MovieRepository;
 import com.example.miniproject01.movie.dto.MovieRequest;
+import com.example.miniproject01.movie.dto.MovieSearch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -47,8 +48,13 @@ public class MovieService {
         movieRepository.deleteById(id);
     }
 
-    public List<MovieEntity> searchMovies(String title) {
+    // 검색된 리스트
+    public List<MovieSearch> searchMovies(String title) {
 
         return movieRepository.findByTitleContaining(title);
     }
+
+
+
+
 }

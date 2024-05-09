@@ -2,10 +2,9 @@ package com.example.miniproject01.movie.controller;
 
 import com.example.miniproject01.movie.db.MovieEntity;
 import com.example.miniproject01.movie.db.MovieRepository;
+import com.example.miniproject01.movie.dto.MovieSearch;
 import com.example.miniproject01.movie.service.MovieService;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -21,7 +20,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/movie")
@@ -37,6 +35,18 @@ public class MovieApiController {
     ){
         return movieService.all();
     }
+
+    @GetMapping("/search")
+    public List<MovieSearch> searchMovies(@RequestParam String title) {
+
+        return movieService.searchMovies(title);
+    }
+
+    @GetMapping("/onepick")
+    public String movieOnepick(){
+        return "";
+    }
+
 
     @GetMapping("/popularapi")
     public void movieApiSave() {  // 반환 타입을 String에서 void로 변경하여 직접 출력
@@ -160,14 +170,6 @@ public class MovieApiController {
             }
         }
 
-    }
-
-    @GetMapping("/search")
-    public List<MovieEntity> searchMovies(@RequestParam String title) {
-
-        log.info("Searching for movies with title containing: {}", title);
-
-        return movieRepository.findByTitleContaining(title);
     }
 
 }
