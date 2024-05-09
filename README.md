@@ -79,19 +79,18 @@
 1. **TMDB API - Movie List (Popular)에서 100 페이지까지 영화 정보 DB에 저장하기**
    - 가져오는 DB를 저장하기 위해서 Database와 연동이 필요함
      - 아직 정확한 개념을 이해한건 아니지만, 기존 강의에서 사용했던 방식인 Docker로 MySQL과 연동 및 GUI형식인 MySQL 워크벤치를 이용하는 방법을 사용할 예정 
-     - 그리고 데이터 크롤링해온다.
-     - 가져온 데이터를 ID, 제목, 날짜가 보이게 리스트업 한다.
-     - 가져온 리스트를 페이지네이션 한다.
+     - API 크롤링
+     - 크롤링한 데이터를 MySQL DB에 저장
+   - 1개의 Movie에 여러개의 Genre를 갖는다
+     - 원래는 3개의 테이블 (Movie, Genre, Movie-Genre매칭)을 만들어야하는 것이 맞지만
+     - 이번에는 여러개의 Genre를 Json형식으로 Movie 테이블에 그대로 저장으로 진행 
 2. **TMDB API - Movie List (Now Playing)에서 100 페이지까지 영화 정보 DB에 저장하기**
    - 데이터를 크롤링해온다.
    - 크롤링 해올때 기존 DB에 존재하는 영화인지를 확인하는 로직이 있어야 한다
-
 3. **영화 검색하기 (영화 리스트)**
    - JPA Repository 기능 중 findBy(컬럼 이름)Containing 을 사용
-
 4. **영화 상세 (영화 하나만 return)**
    - 영화 ID를 조회하면 해당 영화 ID값의 상세 정보를 볼 수 있도록 해야함.
-
 5. **영화 리뷰 (작성, 삭제, 수정, 조회)**
    - 위 4번까지 완성 후 작성예정
 6. **회원가입, 로그인**
@@ -103,10 +102,42 @@
 
 - 컬럼
   - id
+    - BIGINT
     - PK
+    - Not Null
     - 자동생성 아님
-    - Not Null
   - name
+    - VARCHAR(255)
     - Not Null
-- /genre
+
+
+
+### Movie 테이블
+
+- id
+  - PK
+  - BIGINT
+  - Auto Incarement
+  - Not Null
+- movie_id
+  - BIGINT
+  - Not Null
+- genre_id
+  - VARCHAR(255)
+  - Not Null
+- original_title
+  - VARCHAR(255)
+  - Not Null
+- title
+  - VARCHAR(255)
+  - Not Null
+- release_date
+  - VARCHAR(255)
+  - Not Null
+- poster_path
+  - VARCHAR(255)
+  - Not Null
+- overview
+  - VARCHAR(255)
+  - Not Null
 
