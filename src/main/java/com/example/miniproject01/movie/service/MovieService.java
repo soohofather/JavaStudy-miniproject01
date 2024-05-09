@@ -46,4 +46,9 @@ public class MovieService {
 
         movieRepository.deleteById(id);
     }
+
+    public List<MovieEntity> searchMovies(String title) {
+
+        return movieRepository.findByTitleContaining(title);
+    }
 }

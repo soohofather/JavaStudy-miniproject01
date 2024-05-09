@@ -26,7 +26,6 @@ public class MovieRequest {
     private String title;
     @NotBlank
     private String releaseDate;
-    @NotBlank
     private String posterPath;
     @NotBlank
     private String overview;
