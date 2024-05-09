@@ -55,7 +55,7 @@ public class GenreApiController {
     }
 
     @GetMapping("/api")
-    public void apisave() {  // 반환 타입을 String에서 void로 변경하여 직접 출력
+    public void genreApiSave() {  // 반환 타입을 String에서 void로 변경하여 직접 출력
 
         try {
             URL url = new URL("https://api.themoviedb.org/3/genre/movie/list?api_key=a986250901395deffed1ae6e646ae735&language=en-US");
