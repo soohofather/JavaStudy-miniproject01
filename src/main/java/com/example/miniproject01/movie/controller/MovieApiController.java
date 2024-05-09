@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
@@ -36,53 +37,63 @@ public class MovieApiController {
     @GetMapping("/popularapi")
     public void movieApiSave() {  // 반환 타입을 String에서 void로 변경하여 직접 출력
 
-        try {
-            URL url = new URL("https://api.themoviedb.org/3/movie/popular?api_key=a986250901395deffed1ae6e646ae735&language=en-US");
-            BufferedReader bf = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
-            String result = bf.readLine();
+        String baseUrl = "https://api.themoviedb.org/3/movie/popular";
+        String apiKey = "a986250901395deffed1ae6e646ae735";
+        String language = "en-US";
 
-            JSONParser jsonParser = new JSONParser();
-            JSONObject jsonObject = (JSONObject) jsonParser.parse(result);
-            JSONArray results = (JSONArray) jsonObject.get("results");
+        for(int page = 1; page <= 100; page++) {
 
-            for (Object obj : results) {
-                JSONObject movies = (JSONObject) obj;
-                Long movieId = (Long) movies.get("id");
+            try {
+                URL url = new URL(String.format("%s?api_key=%s&language=%s&page=%d", baseUrl, apiKey, language, page));
+                HttpURLConnection pageUrl = (HttpURLConnection) url.openConnection();
 
-                // Check if genre already exists
-                if (!movieRepository.existsById(movieId)) {
+                BufferedReader bf = new BufferedReader(new InputStreamReader(pageUrl.getInputStream(), "UTF-8"));
+                String result = bf.readLine();
+                bf.close();
 
-                    JSONArray genreIds = (JSONArray) movies.get("genre_ids");
-                    String originalTitle = (String) movies.get("original_title");
-                    String title = (String) movies.get("title");
-                    String releaseDate = (String) movies.get("release_date");
-                    String posterPath = (String) movies.get("poster_path");
-                    String overview = (String) movies.get("overview");
+                JSONParser jsonParser = new JSONParser();
+                JSONObject jsonObject = (JSONObject) jsonParser.parse(result);
+                JSONArray results = (JSONArray) jsonObject.get("results");
 
-                    MovieEntity movie = MovieEntity.builder()
-                            .movieId(movieId)
-                            .genreId(genreIds.toString())
-                            .originalTitle(originalTitle)
-                            .title(title)
-                            .releaseDate(releaseDate)
-                            .posterPath(posterPath)
-                            .overview(overview)
-                            .build()
-                            ;
+                for (Object obj : results) {
+                    JSONObject movies = (JSONObject) obj;
+                    Long movieId = (Long) movies.get("id");
 
-                    movieRepository.save(movie);
-                    System.out.println("Saved new genre: ID " + movieId + ", Title " + title);
+                    // Check if genre already exists
+                    if (!movieRepository.existsById(movieId)) {
 
-                } else {
-                    System.out.println("Genre already exists: ID " + movieId);
+                        JSONArray genreIds = (JSONArray) movies.get("genre_ids");
+                        String originalTitle = (String) movies.get("original_title");
+                        String title = (String) movies.get("title");
+                        String releaseDate = (String) movies.get("release_date");
+                        String posterPath = (String) movies.get("poster_path");
+                        String overview = (String) movies.get("overview");
+
+                        MovieEntity movie = MovieEntity.builder()
+                                .movieId(movieId)
+                                .genreId(genreIds.toString())
+                                .originalTitle(originalTitle)
+                                .title(title)
+                                .releaseDate(releaseDate)
+                                .posterPath(posterPath)
+                                .overview(overview)
+                                .build();
+
+                        movieRepository.save(movie);
+                        System.out.println("Saved new genre: ID " + movieId + ", Title " + title);
+
+                    } else {
+                        System.out.println("Genre already exists: ID " + movieId);
+                    }
                 }
-            }
-            System.out.println("Genres updated successfully.");
+                System.out.println("Genres updated successfully.");
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error occurred while fetching data");
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error occurred while fetching data");
+            }
         }
+
     }
 
 }
