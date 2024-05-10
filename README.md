@@ -159,6 +159,9 @@
   - Not Null
 - create_at
   - DATETIME
+  - 작성 시간 기준으로 자동으로 넣기
 - modified_at
   - DATETIME
+  - 수정 하는 시간으로 자동으로 넣기
+  - Null 값 가능
 

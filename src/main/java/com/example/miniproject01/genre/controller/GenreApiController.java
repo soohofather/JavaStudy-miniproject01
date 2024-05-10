@@ -25,6 +25,7 @@ import java.util.Iterator;
 public class GenreApiController {
 
     private final GenreService genreService;
+
     @Autowired
     private GenreRepository genreRepository;
 
