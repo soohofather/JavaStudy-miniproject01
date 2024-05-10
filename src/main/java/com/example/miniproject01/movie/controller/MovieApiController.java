@@ -9,10 +9,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -42,9 +39,10 @@ public class MovieApiController {
         return movieService.searchMovies(title);
     }
 
-    @GetMapping("/onepick")
-    public String movieOnepick(){
-        return "";
+    @GetMapping("/onepick/{movieId}")
+    public MovieEntity movieOnepick(@PathVariable Long movieId){
+
+        return movieService.movieOnepick(movieId);
     }
 
 

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +55,14 @@ public class MovieService {
         return movieRepository.findByTitleContaining(title);
     }
 
+
+    // 글 하나 보기
+    public MovieEntity movieOnepick(Long movieId){
+
+        Optional<MovieEntity> pickMovie = movieRepository.findByMovieId(movieId);
+
+        return pickMovie.orElse(null);
+    }
 
 
 
