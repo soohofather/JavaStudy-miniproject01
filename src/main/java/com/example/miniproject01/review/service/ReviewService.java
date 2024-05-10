@@ -37,4 +37,9 @@ public class ReviewService {
 
         return reviewRepository.findAll();
     }
+
+    public void reviewDelete(Long id) {
+
+        reviewRepository.deleteById(id);
+    }
 }
