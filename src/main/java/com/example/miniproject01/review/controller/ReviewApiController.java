@@ -8,10 +8,9 @@ import com.example.miniproject01.review.dto.ReviewRequest;
 import com.example.miniproject01.review.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,4 +29,12 @@ public class ReviewApiController {
     ){
         return reviewService.create(reviewRequestRequest);
     }
+
+    @GetMapping("/list")
+    public List<ReviewEntity> list(
+
+    ){
+        return reviewService.all();
+    }
+
 }
