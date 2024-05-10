@@ -92,7 +92,11 @@
 4. **영화 상세 (영화 하나만 return)**
    - 영화 ID를 조회하면 해당 영화 ID값의 상세 정보를 볼 수 있도록 해야함.
 5. **영화 리뷰 (작성, 삭제, 수정, 조회)**
-   - 위 4번까지 완성 후 작성예정
+   - ERD 작성
+   - Create (작성)
+   - Read (조회)
+   - Update (수정)
+   - Delete (삭제)
 6. **회원가입, 로그인**
    - 위 5번까지 완성 후 작성예정
 
@@ -117,7 +121,7 @@
 - id
   - PK
   - BIGINT
-  - Auto Incarement
+  - Auto Increment
   - Not Null
 - movie_id
   - BIGINT
@@ -136,8 +140,25 @@
   - Not Null
 - poster_path
   - VARCHAR(255)
-  - Not Null
 - overview
+  - TEXT
+  - Not Null
+
+
+
+### Review 테이블
+
+- id
+  - BIGINT
+  - Auto Increment
+- movie_title
   - VARCHAR(255)
   - Not Null
+- content
+  - TEXT
+  - Not Null
+- create_at
+  - DATETIME
+- modified_at
+  - DATETIME
 
