@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,5 +31,10 @@ public class ReviewService {
                 ;
 
         return reviewRepository.save(entity);
+    }
+
+    public List<ReviewEntity> all() {
+
+        return reviewRepository.findAll();
     }
 }
