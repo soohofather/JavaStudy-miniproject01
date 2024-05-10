@@ -37,4 +37,12 @@ public class ReviewApiController {
         return reviewService.all();
     }
 
+    @GetMapping("/delete/{id}")
+    public String reviewDelete(@PathVariable Long id) {
+
+        reviewService.reviewDelete(id);
+
+        return "";
+    }
+
 }
