@@ -4,6 +4,7 @@ package com.example.miniproject01.review.service;
 import com.example.miniproject01.genre.db.GenreEntity;
 import com.example.miniproject01.genre.db.GenreRepository;
 import com.example.miniproject01.genre.dto.GenreRequest;
+import com.example.miniproject01.movie.db.MovieEntity;
 import com.example.miniproject01.review.db.ReviewEntity;
 import com.example.miniproject01.review.db.ReviewRepository;
 import com.example.miniproject01.review.dto.ReviewRequest;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,4 +44,12 @@ public class ReviewService {
 
         reviewRepository.deleteById(id);
     }
+
+    public ReviewEntity reviewOnepick(Long id){
+
+        Optional<ReviewEntity> pickReview = reviewRepository.findById(id);
+
+        return pickReview.orElse(null);
+    }
+
 }
