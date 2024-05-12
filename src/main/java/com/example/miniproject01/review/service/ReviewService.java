@@ -8,6 +8,7 @@ import com.example.miniproject01.movie.db.MovieEntity;
 import com.example.miniproject01.review.db.ReviewEntity;
 import com.example.miniproject01.review.db.ReviewRepository;
 import com.example.miniproject01.review.dto.ReviewRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +51,19 @@ public class ReviewService {
         Optional<ReviewEntity> pickReview = reviewRepository.findById(id);
 
         return pickReview.orElse(null);
+    }
+
+    @Transactional
+    public ReviewEntity reviewUpdate(Long id, ReviewEntity newReview) {
+
+        ReviewEntity oldReview = reviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Review not found with id " + id));
+
+        oldReview.setMovieTitle(newReview.getMovieTitle());
+        oldReview.setContent(newReview.getContent());
+        oldReview.setModifiedAt(LocalDateTime.now());
+
+        return reviewRepository.save(oldReview);
     }
 
 }

@@ -94,9 +94,13 @@
 5. **영화 리뷰 (작성, 삭제, 수정, 조회)**
    - ERD 작성
    - Create (작성)
+     - @POSTMAPPING
    - Read (조회)
+     - @GETMAPPING
    - Update (수정)
+     - @PUTMAPPING
    - Delete (삭제)
+     - @GETMAPPING
 6. **회원가입, 로그인**
    - 위 5번까지 완성 후 작성예정
 
