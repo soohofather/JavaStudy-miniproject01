@@ -3,6 +3,7 @@ package com.example.miniproject01.review.controller;
 
 import com.example.miniproject01.genre.db.GenreEntity;
 import com.example.miniproject01.genre.dto.GenreRequest;
+import com.example.miniproject01.movie.db.MovieEntity;
 import com.example.miniproject01.review.db.ReviewEntity;
 import com.example.miniproject01.review.dto.ReviewRequest;
 import com.example.miniproject01.review.service.ReviewService;
@@ -43,6 +44,12 @@ public class ReviewApiController {
         reviewService.reviewDelete(id);
 
         return "";
+    }
+
+    @GetMapping("/onepick/{id}")
+    public ReviewEntity reviewOnepick(@PathVariable("id") Long id){
+
+        return reviewService.reviewOnepick(id);
     }
 
 }
