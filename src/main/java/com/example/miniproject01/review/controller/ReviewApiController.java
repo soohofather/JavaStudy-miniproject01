@@ -5,10 +5,12 @@ import com.example.miniproject01.genre.db.GenreEntity;
 import com.example.miniproject01.genre.dto.GenreRequest;
 import com.example.miniproject01.movie.db.MovieEntity;
 import com.example.miniproject01.review.db.ReviewEntity;
+import com.example.miniproject01.review.db.ReviewRepository;
 import com.example.miniproject01.review.dto.ReviewRequest;
 import com.example.miniproject01.review.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,5 +53,19 @@ public class ReviewApiController {
 
         return reviewService.reviewOnepick(id);
     }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ReviewEntity> reviewUpdate(
+            @PathVariable("id")
+            Long id,
+            @RequestBody
+            ReviewEntity newReview
+    ){
+
+        ReviewEntity reviewUpdate = reviewService.reviewUpdate(id, newReview);
+        return ResponseEntity.ok(reviewUpdate);
+
+    }
+
 
 }
