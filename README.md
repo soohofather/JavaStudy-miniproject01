@@ -101,8 +101,16 @@
      - @PUTMAPPING
    - Delete (삭제)
      - @GETMAPPING
-6. **회원가입, 로그인**
-   - 위 5번까지 완성 후 작성예정
+
+
+
+### 프로젝트 기술 스택
+
+- Server Framework : Spring Boot 3.2.5
+- Build Tool : Gradle, Groovy
+- Language : Java 17
+- Database Library : JPA
+- Database Server: MySQL 8.0.26
 
 
 
