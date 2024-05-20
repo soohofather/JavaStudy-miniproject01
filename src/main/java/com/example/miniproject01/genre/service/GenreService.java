@@ -9,6 +9,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -22,6 +24,7 @@ import java.util.List;
 public class GenreService {
 
     private final GenreRepository genreRepository;
+    private final WebClient webClient = WebClient.create();
 
     // 글쓰기
     public GenreEntity create(
@@ -98,5 +101,51 @@ public class GenreService {
 
     }
 
+    public void genreApiSave2() {
+        String baseUrl = "https://api.themoviedb.org/3/genre/movie/list";
+        String apiKey = "a986250901395deffed1ae6e646ae735";
+        String language = "en-US";
+
+        fetchAndSaveGenres(baseUrl, apiKey, language);
+    }
+
+    public void fetchAndSaveGenres2(String baseUrl, String apiKey, String language) {
+
+        String url = String.format("%s?api_key=%s&language=%s", baseUrl, apiKey, language);
+
+        webClient.get()
+                .uri(url)
+                .retrieve()
+                .bodyToMono(String.class)
+                .flatMap(response -> {
+                    try {
+                        JSONParser jsonParser = new JSONParser();
+                        JSONObject jsonObject = (JSONObject) jsonParser.parse(response);
+                        JSONArray genres = (JSONArray) jsonObject.get("genres");
+
+                        for (Object obj : genres) {
+                            JSONObject genreObject = (JSONObject) obj;
+                            Long id = (Long) genreObject.get("id");
+                            String name = (String) genreObject.get("name");
+
+                            // Check if genre already exists
+                            if (!genreRepository.existsById(id)) {
+                                GenreEntity genre = new GenreEntity(id, name);
+                                genreRepository.save(genre);
+                                System.out.println("Saved new genre: ID " + id + ", Name " + name);
+                            } else {
+                                System.out.println("Genre already exists: ID " + id + ", Name " + name);
+                            }
+                        }
+                        System.out.println("Genres updated successfully.");
+                        return Mono.empty();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        System.out.println("Error occurred while fetching data");
+                        return Mono.error(e);
+                    }
+                }).subscribe();
+
+    }
 
 }
