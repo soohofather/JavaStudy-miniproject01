@@ -1,6 +1,7 @@
 package com.example.miniproject01.genre.service;
 
 
+import com.example.miniproject01.exception.NotFoundException;
 import com.example.miniproject01.genre.db.GenreEntity;
 import com.example.miniproject01.genre.db.GenreRepository;
 import com.example.miniproject01.genre.dto.GenreDto;
@@ -77,6 +78,9 @@ public class GenreService {
     // 글 삭제
     public void genreDelete(Long id) {
 
+        if(!genreRepository.existsById(id)) {
+            throw new NotFoundException("Not found");
+        }
         genreRepository.deleteById(id);
     }
 

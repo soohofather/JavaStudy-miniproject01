@@ -1,5 +1,6 @@
 package com.example.miniproject01.genre.controller;
 
+import com.example.miniproject01.exception.NotFoundException;
 import com.example.miniproject01.genre.db.GenreEntity;
 import com.example.miniproject01.genre.db.GenreRepository;
 import com.example.miniproject01.genre.dto.GenreDto;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.json.simple.parser.JSONParser;
 
@@ -48,10 +51,15 @@ public class GenreApiController {
     }
 
     @GetMapping("/delete/{id}")
-    public String genreDelete(@PathVariable("id") Long id) {
+    public ResponseEntity<String> genreDelete(@PathVariable("id") Long id) {
 
         genreService.genreDelete(id);
-        return "";
+        return ResponseEntity.ok("Delete Completed");
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<String> handleNotFoundException(NotFoundException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
     @GetMapping("/api")
