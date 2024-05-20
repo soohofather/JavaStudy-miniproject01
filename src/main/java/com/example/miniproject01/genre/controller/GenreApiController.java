@@ -60,4 +60,10 @@ public class GenreApiController {
 
         genreService.genreApiSave();
     }
+
+    @GetMapping("/api2")
+    public void genreApiSave2() {  // 반환 타입을 String에서 void로 변경하여 직접 출력
+
+        genreService.genreApiSave2();
+    }
 }
