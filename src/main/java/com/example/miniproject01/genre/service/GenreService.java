@@ -3,12 +3,15 @@ package com.example.miniproject01.genre.service;
 
 import com.example.miniproject01.genre.db.GenreEntity;
 import com.example.miniproject01.genre.db.GenreRepository;
+import com.example.miniproject01.genre.dto.GenreDto;
 import com.example.miniproject01.genre.dto.GenreRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -18,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,22 +31,48 @@ public class GenreService {
     private final WebClient webClient = WebClient.create();
 
     // 글쓰기
-    public GenreEntity create(
-        GenreRequest genreRequest
-    ) {
-        var entity = GenreEntity.builder()
+//    public GenreEntity create(
+//        GenreRequest genreRequest
+//    ) {
+//        var entity = GenreEntity.builder()
+//                .id(genreRequest.getId())
+//                .name(genreRequest.getName())
+//                .build()
+//                ;
+//
+//        return genreRepository.save(entity);
+//    }
+
+    public GenreDto create(GenreRequest genreRequest) {
+        GenreEntity entity = GenreEntity.builder()
                 .id(genreRequest.getId())
                 .name(genreRequest.getName())
                 .build()
                 ;
 
-        return genreRepository.save(entity);
+        GenreEntity savedEntity = genreRepository.save(entity);
+        return GenreDto.builder()
+                .id(savedEntity.getId())
+                .name(savedEntity.getName())
+                .build()
+                ;
+
     }
 
     // 리스트
-    public List<GenreEntity> all() {
-        return genreRepository.findAll();
+//    public List<GenreEntity> all() {
+//
+//        return genreRepository.findAll();
+//    }
+    public List<GenreDto> all() {
+        return genreRepository.findAll().stream()
+                .map(entity -> GenreDto.builder()
+                        .id(entity.getId())
+                        .name(entity.getName())
+                        .build())
+                .collect(Collectors.toList());
     }
+
 
     // 글 삭제
     public void genreDelete(Long id) {

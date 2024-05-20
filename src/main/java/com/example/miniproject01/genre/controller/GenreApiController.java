@@ -2,6 +2,7 @@ package com.example.miniproject01.genre.controller;
 
 import com.example.miniproject01.genre.db.GenreEntity;
 import com.example.miniproject01.genre.db.GenreRepository;
+import com.example.miniproject01.genre.dto.GenreDto;
 import com.example.miniproject01.genre.dto.GenreRequest;
 import com.example.miniproject01.genre.service.GenreService;
 import jakarta.validation.Valid;
@@ -30,7 +31,7 @@ public class GenreApiController {
     private GenreRepository genreRepository;
 
     @PostMapping("/create")
-    public GenreEntity create(
+    public GenreDto create(
 
             @Valid
             @RequestBody
@@ -41,9 +42,8 @@ public class GenreApiController {
     }
 
     @GetMapping("/list")
-    public List<GenreEntity> list(
+    public List<GenreDto> list(){
 
-    ){
         return genreService.all();
     }
 
@@ -51,7 +51,6 @@ public class GenreApiController {
     public String genreDelete(@PathVariable("id") Long id) {
 
         genreService.genreDelete(id);
-
         return "";
     }
 
