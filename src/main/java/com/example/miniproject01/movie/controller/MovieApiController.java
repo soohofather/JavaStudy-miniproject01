@@ -52,4 +52,16 @@ public class MovieApiController {
         movieService.nowplayApiSave();
     }
 
+    @GetMapping("/popularapi2")
+    public void movieApiSave2() {  // 반환 타입을 String에서 void로 변경하여 직접 출력
+
+        movieService.movieApiSave2();
+    }
+
+    @GetMapping("/nowplayapi2")
+    public void nowplayApiSave2() {  // 반환 타입을 String에서 void로 변경하여 직접 출력
+
+        movieService.nowplayApiSave2();
+    }
+
 }
