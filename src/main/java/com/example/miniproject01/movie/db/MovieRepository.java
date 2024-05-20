@@ -15,4 +15,6 @@ public interface MovieRepository extends JpaRepository<MovieEntity, Long> {
     List<MovieSearch> findByTitleContaining(@Param("title") String title);
 
     Optional<MovieEntity> findByMovieId(Long movieId);
+
+    Boolean existsByMovieId(Long movieId);
 }
