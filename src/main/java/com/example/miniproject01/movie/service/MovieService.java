@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +25,7 @@ import java.net.URL;
 public class MovieService {
 
     private final MovieRepository movieRepository;
+    private final WebClient webClient = WebClient.create();
 
     // 글쓰기
     public MovieEntity create(
@@ -143,7 +146,79 @@ public class MovieService {
         }
     }
 
+    // Popular Movies API Save
+    public void movieApiSave2() {
+        String baseUrl = "https://api.themoviedb.org/3/movie/popular";
+        String apiKey = "a986250901395deffed1ae6e646ae735";
+        String language = "en-US";
 
+        fetchAndSaveMovies2(baseUrl, apiKey, language);
+    }
+
+    // Now Playing Movies API Save
+    public void nowplayApiSave2() {
+        String baseUrl = "https://api.themoviedb.org/3/movie/now_playing";
+        String apiKey = "a986250901395deffed1ae6e646ae735";
+        String language = "en-US";
+
+        fetchAndSaveMovies2(baseUrl, apiKey, language);
+    }
+
+    // Fetch and Save Movies
+    private void fetchAndSaveMovies2(String baseUrl, String apiKey, String language) {
+        for (int page = 1; page <= 100; page++) {
+            final int currentPage = page;
+
+            String url = String.format("%s?api_key=%s&language=%s&page=%d", baseUrl, apiKey, language, page);
+
+            webClient.get()
+                    .uri(url)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .flatMap(response -> {
+                        try {
+                            JSONParser jsonParser = new JSONParser();
+                            JSONObject jsonObject = (JSONObject) jsonParser.parse(response);
+                            JSONArray results = (JSONArray) jsonObject.get("results");
+
+                            for (Object obj : results) {
+                                JSONObject movies = (JSONObject) obj;
+                                Long movieId = (Long) movies.get("id");
+
+                                if (!movieRepository.existsByMovieId(movieId)) {
+                                    JSONArray genreIds = (JSONArray) movies.get("genre_ids");
+                                    String originalTitle = (String) movies.get("original_title");
+                                    String title = (String) movies.get("title");
+                                    String releaseDate = (String) movies.get("release_date");
+                                    String posterPath = (String) movies.get("poster_path");
+                                    String overview = (String) movies.get("overview");
+
+                                    MovieEntity movie = MovieEntity.builder()
+                                            .movieId(movieId)
+                                            .genreId(genreIds.toString())
+                                            .originalTitle(originalTitle)
+                                            .title(title)
+                                            .releaseDate(releaseDate)
+                                            .posterPath(posterPath)
+                                            .overview(overview)
+                                            .build();
+
+                                    movieRepository.save(movie);
+                                    System.out.println("Saved new movie: ID " + movieId + ", Title " + title);
+                                } else {
+                                    System.out.println("Movie already exists: ID " + movieId);
+                                }
+                            }
+                            System.out.println("Movies updated successfully for page " + currentPage);
+                            return Mono.empty();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            System.out.println("Error occurred while fetching data for page " + currentPage);
+                            return Mono.error(e);
+                        }
+                    }).block();
+        }
+    }
 
 
 }
