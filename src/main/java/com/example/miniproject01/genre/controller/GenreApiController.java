@@ -58,34 +58,6 @@ public class GenreApiController {
     @GetMapping("/api")
     public void genreApiSave() {  // 반환 타입을 String에서 void로 변경하여 직접 출력
 
-        try {
-            URL url = new URL("https://api.themoviedb.org/3/genre/movie/list?api_key=a986250901395deffed1ae6e646ae735&language=en-US");
-            BufferedReader bf = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
-            String result = bf.readLine();
-
-            JSONParser jsonParser = new JSONParser();
-            JSONObject jsonObject = (JSONObject) jsonParser.parse(result);
-            JSONArray genres = (JSONArray) jsonObject.get("genres");
-
-            for (Iterator<?> iterator = genres.iterator(); iterator.hasNext();) {
-                JSONObject genreObject = (JSONObject) iterator.next();
-                Long id = (Long) genreObject.get("id");
-                String name = (String) genreObject.get("name");
-
-                // Check if genre already exists
-                if (!genreRepository.existsById(id)) {
-                    GenreEntity genre = new GenreEntity(id, name);
-                    genreRepository.save(genre);
-                    System.out.println("Saved new genre: ID " + id + ", Name " + name);
-                } else {
-                    System.out.println("Genre already exists: ID " + id + ", Name " + name);
-                }
-            }
-            System.out.println("Genres updated successfully.");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error occurred while fetching data");
-        }
+        genreService.genreApiSave();
     }
 }
