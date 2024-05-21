@@ -1,9 +1,13 @@
 package com.example.miniproject01.movie.service;
 
 import com.example.miniproject01.exception.NotFoundException;
+import com.example.miniproject01.genre.db.GenreEntity;
+import com.example.miniproject01.genre.db.GenreRepository;
+import com.example.miniproject01.genre.dto.GenreDto;
 import com.example.miniproject01.movie.db.MovieEntity;
 import com.example.miniproject01.movie.db.MovieRepository;
 import com.example.miniproject01.movie.dto.MovieDto;
+import com.example.miniproject01.movie.dto.MovieOnePickDto;
 import com.example.miniproject01.movie.dto.MovieSearch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +30,7 @@ import java.net.URL;
 public class MovieService {
 
     private final MovieRepository movieRepository;
+    private final GenreRepository genreRepository;
     private final WebClient webClient = WebClient.create();
 
     // 리스트
@@ -68,13 +73,29 @@ public class MovieService {
     }
 
     // 글 하나 보기
-    public MovieDto movieOnepick(Long movieId){
+    public MovieOnePickDto movieOnepick(Long movieId){
 
         MovieEntity entity = movieRepository.findByMovieId(movieId).orElseThrow(() -> new NotFoundException("Not Found"));
 
-        return MovieDto.builder()
+        String genreIdString = entity.getGenreId();
+        String cleaned = genreIdString.replace("[","").replace("]","").trim();
+        String[] parts = cleaned.split(",");
+
+        List<Long> genreIds = new ArrayList<>();
+        for (String part : parts) {
+            genreIds.add(Long.parseLong(part.trim()));
+        }
+
+        List<String> genreDtos = new ArrayList<>();
+        for (Long genreId : genreIds) {
+            GenreEntity genreEntity = genreRepository.findById(genreId)
+                    .orElseThrow(() -> new NotFoundException("Not Found Genre"));
+            genreDtos.add(genreEntity.getName());
+        }
+
+        return MovieOnePickDto.builder()
                 .movieId(entity.getMovieId())
-                .genreId(entity.getGenreId())
+                .genres(genreDtos)
                 .originalTitle(entity.getOriginalTitle())
                 .title(entity.getTitle())
                 .releaseDate(entity.getReleaseDate())
