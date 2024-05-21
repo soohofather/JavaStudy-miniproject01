@@ -1,8 +1,9 @@
 package com.example.miniproject01.movie.service;
 
+import com.example.miniproject01.exception.NotFoundException;
 import com.example.miniproject01.movie.db.MovieEntity;
 import com.example.miniproject01.movie.db.MovieRepository;
-import com.example.miniproject01.movie.dto.MovieRequest;
+import com.example.miniproject01.movie.dto.MovieDto;
 import com.example.miniproject01.movie.dto.MovieSearch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,8 +14,8 @@ import org.json.simple.parser.JSONParser;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -27,49 +28,60 @@ public class MovieService {
     private final MovieRepository movieRepository;
     private final WebClient webClient = WebClient.create();
 
-    // 글쓰기
-    public MovieEntity create(
-            MovieRequest movieRequest
-    ) {
-        var entity = MovieEntity.builder()
-                .movieId(movieRequest.getMovieId())
-                .genreId(movieRequest.getGenreId())
-                .originalTitle(movieRequest.getOriginalTitle())
-                .title(movieRequest.getTitle())
-                .releaseDate(movieRequest.getReleaseDate())
-                .posterPath(movieRequest.getPosterPath())
-                .overview(movieRequest.getOverview())
-                .build()
-                ;
-
-        return movieRepository.save(entity);
-    }
-
     // 리스트
-    public List<MovieEntity> all() {
+    public List<MovieDto> all() {
 
-        return movieRepository.findAll();
+        List<MovieEntity> entities = movieRepository.findAll();
+        List<MovieDto> movieDtos = new ArrayList<>();
+
+        for (MovieEntity entity : entities) {
+            MovieDto movieDto = MovieDto.builder()
+                    .movieId(entity.getMovieId())
+                    .genreId(entity.getGenreId())
+                    .originalTitle(entity.getOriginalTitle())
+                    .title(entity.getTitle())
+                    .releaseDate(entity.getReleaseDate())
+                    .posterPath(entity.getPosterPath())
+                    .overview(entity.getOverview())
+                    .build()
+                    ;
+            movieDtos.add(movieDto);
+        }
+        return movieDtos;
     }
 
     // 글 삭제
     public void movieDelete(Long id) {
 
+        if(!movieRepository.existsByMovieId(id)) {
+            throw new NotFoundException("Not found");
+        }
         movieRepository.deleteById(id);
     }
 
     // 검색된 리스트
     public List<MovieSearch> searchMovies(String title) {
-
+        if(movieRepository.findByTitleContaining(title) == null) {
+            throw new NotFoundException("Not found");
+        }
         return movieRepository.findByTitleContaining(title);
     }
 
-
     // 글 하나 보기
-    public MovieEntity movieOnepick(Long movieId){
+    public MovieDto movieOnepick(Long movieId){
 
-        Optional<MovieEntity> pickMovie = movieRepository.findByMovieId(movieId);
+        MovieEntity entity = movieRepository.findByMovieId(movieId).orElseThrow(() -> new NotFoundException("Not Found"));
 
-        return pickMovie.orElse(null);
+        return MovieDto.builder()
+                .movieId(entity.getMovieId())
+                .genreId(entity.getGenreId())
+                .originalTitle(entity.getOriginalTitle())
+                .title(entity.getTitle())
+                .releaseDate(entity.getReleaseDate())
+                .posterPath(entity.getPosterPath())
+                .overview(entity.getOverview())
+                .build()
+                ;
     }
 
     // Popular Movies API Save
