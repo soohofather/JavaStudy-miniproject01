@@ -1,12 +1,9 @@
 package com.example.miniproject01.review.service;
 
-
-import com.example.miniproject01.genre.db.GenreEntity;
-import com.example.miniproject01.genre.db.GenreRepository;
-import com.example.miniproject01.genre.dto.GenreRequest;
-import com.example.miniproject01.movie.db.MovieEntity;
+import com.example.miniproject01.exception.NotFoundException;
 import com.example.miniproject01.review.db.ReviewEntity;
 import com.example.miniproject01.review.db.ReviewRepository;
+import com.example.miniproject01.review.dto.ReviewDto;
 import com.example.miniproject01.review.dto.ReviewRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,47 +21,86 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
 
     // 글쓰기
-    public ReviewEntity create(
-            ReviewRequest reviewRequest
-    ) {
-        var entity = ReviewEntity.builder()
+    public ReviewDto create(ReviewRequest reviewRequest) {
+
+        ReviewEntity entity = ReviewEntity.builder()
                 .movieTitle(reviewRequest.getMovieTitle())
                 .content(reviewRequest.getContent())
                 .createAt(LocalDateTime.now())
                 .build()
                 ;
 
-        return reviewRepository.save(entity);
+        ReviewEntity savedEntity = reviewRepository.save(entity);
+
+        return ReviewDto.builder()
+                .id(savedEntity.getId())
+                .movieTitle(savedEntity.getMovieTitle())
+                .content(savedEntity.getContent())
+                .createAt(savedEntity.getCreateAt())
+                .modifiedAt(savedEntity.getModifiedAt())
+                .build()
+                ;
     }
 
-    public List<ReviewEntity> all() {
+    public List<ReviewDto> all() {
 
-        return reviewRepository.findAll();
+        return reviewRepository.findAll().stream()
+                .map(entity -> ReviewDto.builder()
+                        .id(entity.getId())
+                        .movieTitle(entity.getMovieTitle())
+                        .content(entity.getContent())
+                        .createAt(entity.getCreateAt())
+                        .modifiedAt(entity.getModifiedAt())
+                        .build())
+                .collect(Collectors.toList());
     }
 
+    // 글 삭제
     public void reviewDelete(Long id) {
 
+        if (!reviewRepository.existsById(id)) {
+            throw new NotFoundException("Not Found");
+        }
         reviewRepository.deleteById(id);
     }
 
-    public ReviewEntity reviewOnepick(Long id){
+    // 글 하나만 보기
+    public ReviewDto reviewOnepick(Long id){
 
-        Optional<ReviewEntity> pickReview = reviewRepository.findById(id);
+        ReviewEntity entity = reviewRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Not Found"));
 
-        return pickReview.orElse(null);
+        return ReviewDto.builder()
+                .id(entity.getId())
+                .movieTitle(entity.getMovieTitle())
+                .content(entity.getContent())
+                .createAt(entity.getCreateAt())
+                .modifiedAt(entity.getModifiedAt())
+                .build()
+                ;
     }
 
+    // 글 수정
     @Transactional
-    public ReviewEntity reviewUpdate(Long id, ReviewEntity newReview) {
+    public ReviewDto reviewUpdate(Long id, ReviewRequest newReview) {
 
         ReviewEntity oldReview = reviewRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Review not found with id " + id));
+                .orElseThrow(() -> new NotFoundException("Not Found"));
 
         oldReview.setMovieTitle(newReview.getMovieTitle());
         oldReview.setContent(newReview.getContent());
         oldReview.setModifiedAt(LocalDateTime.now());
 
-        return reviewRepository.save(oldReview);
+        ReviewEntity updatedEntity = reviewRepository.save(oldReview);
+
+        return ReviewDto.builder()
+                .id(updatedEntity.getId())
+                .movieTitle(updatedEntity.getMovieTitle())
+                .content(updatedEntity.getContent())
+                .createAt(updatedEntity.getCreateAt())
+                .modifiedAt(updatedEntity.getModifiedAt())
+                .build()
+                ;
     }
 
 }
