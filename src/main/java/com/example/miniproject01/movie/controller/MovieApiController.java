@@ -2,6 +2,7 @@ package com.example.miniproject01.movie.controller;
 
 import com.example.miniproject01.movie.db.MovieEntity;
 import com.example.miniproject01.movie.db.MovieRepository;
+import com.example.miniproject01.movie.dto.MovieDto;
 import com.example.miniproject01.movie.dto.MovieSearch;
 import com.example.miniproject01.movie.service.MovieService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class MovieApiController {
     private MovieRepository movieRepository;
 
     @GetMapping("/list")
-    public List<MovieEntity> list(
+    public List<MovieDto> list(
 
     ){
         return movieService.all();
@@ -34,7 +35,7 @@ public class MovieApiController {
     }
 
     @GetMapping("/onepick/{movieId}")
-    public MovieEntity movieOnepick(@PathVariable Long movieId){
+    public MovieDto movieOnepick(@PathVariable Long movieId){
 
         return movieService.movieOnepick(movieId);
     }
